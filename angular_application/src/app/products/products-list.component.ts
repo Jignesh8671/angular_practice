@@ -39,6 +39,12 @@ export class ProductListComponent implements OnInit {
     this._listFilter = 'cart';
   }
 
+  ratingClicked(value: number ): void {
+    this.pageTitle = 'product List:' + value;
+
+
+  }
+
   products: Iproduct[] = [
     {
       productId: 2,
@@ -57,7 +63,7 @@ export class ProductListComponent implements OnInit {
       releaseDate: 'May 21, 2021',
       description: 'Curved claw steel hammer',
       price: 8.9,
-      starRating: 4.8,
+      starRating: 3,
       imageUrl: 'assets/images/hammer.png',
     },
   ];
