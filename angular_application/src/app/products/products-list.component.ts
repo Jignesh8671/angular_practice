@@ -1,20 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Iproduct } from './Product';
+import { ProductService } from './product.service';
 
 @Component({
   selector: 'pm-product-list',
   templateUrl: './products-list.component.html',
-  providers: [],
+  providers: [ProductService],
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
+  constructor(private productService: ProductService) {}
+
+  products!: Iproduct[];
 
   pageTitle: string = 'Acme Product Manangement';
   showImage!: boolean;
   private _listFilter: string = '';
   filteredProducts: Iproduct[] = [];
+  sub!: Subscription;
 
   get listFilter(): string {
     return this._listFilter;
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe;
+
   }
 
   set listFilter(value: string) {
@@ -37,34 +48,13 @@ export class ProductListComponent implements OnInit {
   ngOnInit(): void {
     console.log('on init');
     this._listFilter = 'cart';
+    this.sub = this.productService.getProducts().subscribe({
+      next: (products) => (this.products = products),
+      error: (err) => err.errorMessage,
+    });
   }
 
-  ratingClicked(value: number ): void {
+  ratingClicked(value: number): void {
     this.pageTitle = 'product List:' + value;
-
-
   }
-
-  products: Iproduct[] = [
-    {
-      productId: 2,
-      productName: 'Garden Cart',
-      productCode: 'GDN-0023',
-      releaseDate: 'March 18, 2021',
-      description: '15 gallon capacity rolling garden cart',
-      price: 32.99,
-      starRating: 4.2,
-      imageUrl: 'assets/images/garden_cart.png',
-    },
-    {
-      productId: 5,
-      productName: 'Hammer',
-      productCode: 'TBX-0048',
-      releaseDate: 'May 21, 2021',
-      description: 'Curved claw steel hammer',
-      price: 8.9,
-      starRating: 3,
-      imageUrl: 'assets/images/hammer.png',
-    },
-  ];
 }
